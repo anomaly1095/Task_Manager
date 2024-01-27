@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{% static '/pictures/mylogo.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <title>Task manager home</title>
+</head>
+<body>
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">Add tasks</a>
+                    </li>
+                </ul>
+                <form method="post" action="{% url 'search' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value="{{user.id}}" hidden>
+                    <input class="form-control me-2"  placeholder="Search" aria-label="Search" name="value">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <table class="table table-hover table-dark">
+        <thead class="sticky-top">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Start Time</th>
+                <th scope="col">Time_left</th>
+                <th scope="col">Location</th>
+                <th scope="col">Subject</th>
+                <th scope="col">modify task</th>
+                <th scope="col">delete task</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <th scope="row">{{task.id}}</th>
+                <td>{{task.title}}</td>
+                <td>{{task.start_time}}</td>
+                <td>{{task.time_left}}</td>
+                <td>{{task.location}}</td>
+                <td>{{task.subject}}</td>
+                <td>
+                    <button type="button" class="btn btn-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="{{task.description}}">Details</button>
+                </td>
+                <td>
+                    <form action="{% url 'modify_task' %}" method="post" target="blank">
+                        {% csrf_token %}
+                        <input type="hidden" name="Test" value="False" hidden>
+                        <input type="hidden" name="id" value="{{task.id}}" hidden>
+                        <button type="submit" class="btn btn-light">modify</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'delete_task' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{task.id}}" hidden>
+                        <button type="submit" onclick="reloadPage()" class="btn btn-light">delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function reloadPage() {
+            location.reload(true);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
